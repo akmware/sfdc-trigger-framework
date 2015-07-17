@@ -208,7 +208,7 @@ public virtual class TriggerHandler {
 
     public Boolean exceeded() {
       if(this.max < 0) return false;
-      if(this.count > this.max) {
+      if(this.count => this.max) {
         return true;
       }
       return false;
