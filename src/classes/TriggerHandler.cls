@@ -30,9 +30,10 @@ public virtual class TriggerHandler {
   // main method that will be called during execution
   public void run() {
 
-    if(!validateRun()) return;
-
-    addToLoopCount();
+    if(!validateRun())      return;
+    
+    // check if the maxloopcount is exceeded and break 
+    if(!addToLoopCount())   return;
 
     // dispatch to the correct handler method
     if(this.context == TriggerContext.BEFORE_INSERT) {
@@ -130,15 +131,17 @@ public virtual class TriggerHandler {
 
   // increment the loop count
   @TestVisible
-  private void addToLoopCount() {
+  private Boolean addToLoopCount() {
     String handlerName = getHandlerName();
     if(TriggerHandler.loopCountMap.containsKey(handlerName)) {
       Boolean exceeded = TriggerHandler.loopCountMap.get(handlerName).increment();
       if(exceeded) {
         Integer max = TriggerHandler.loopCountMap.get(handlerName).max;
-        throw new TriggerHandlerException('Maximum loop count of ' + String.valueOf(max) + ' reached in ' + handlerName);
+        //throw new TriggerHandlerException('Maximum loop count of ' + String.valueOf(max) + ' reached in ' + handlerName);
+        return false;
       }
     }
+    return true;
   }
 
   // make sure this trigger should continue to run
